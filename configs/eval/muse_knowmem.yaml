@@ -1,0 +1,13 @@
+# @package eval.muse
+
+defaults:
+  - muse_metrics:
+    - forget_knowmem_ROUGE
+    - retain_knowmem_ROUGE
+
+handler: MUSEEvaluator
+output_dir: ${paths.output_dir}
+metrics: {}
+overwrite: false
+data_split: News
+retain_logs_path: null

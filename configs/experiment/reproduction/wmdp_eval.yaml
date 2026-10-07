@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - override /model: zephyr-7b-beta
+  - override /eval: lm_eval
+
+data_split: cyber
+model_revision: null
+tokenizer_revision: null
+model:
+  model_args:
+    attn_implementation: sdpa
+    torch_dtype: bfloat16
+    device_map: auto
+    revision: ${model_revision}
+  tokenizer_args:
+    revision: ${tokenizer_revision}
+eval:
+  lm_eval:
+    tasks:
+      - wmdp_${data_split}
+      - mmlu
+    overwrite: true
+task_name: ???

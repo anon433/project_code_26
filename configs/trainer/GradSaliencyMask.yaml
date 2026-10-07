@@ -1,0 +1,25 @@
+defaults:
+  - finetune
+
+handler: GradSaliencyMaskSearch
+
+args:
+  learning_rate: 1e-5          # unused, but required by HF Trainer
+  num_train_epochs: 5          # passes over data for gradient accumulation
+  gradient_checkpointing: True
+
+mode: unlearn
+
+method_args:
+  select_frac: 0.10            # top 10% of params selected
+  ema_alpha: 0.1               # EMA smoothing for gradient accumulation
+  eps: 1e-8                    # denominator stabiliser
+  param_filter: all            # all | linear_weight | <regex>
+  score_fn: norm_diff
+  save_selector_logits: true
+  selector_logits_storage_dtype: float32
+  save_boolean_active_mask: false
+  independent_side_passes: false
+  forget_score_batches: null
+  retain_score_batches: null
+  consumption_manifest_path: null

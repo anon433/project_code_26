@@ -1,0 +1,14 @@
+# @package eval.muse
+
+defaults:
+  - muse_metrics:
+    - forget_verbmem_ROUGE
+    - privleak
+    - extraction_strength
+
+handler: MUSEEvaluator
+output_dir: ${paths.output_dir}
+metrics: {}
+overwrite: false
+data_split: News
+retain_logs_path: null

@@ -1,0 +1,29 @@
+defaults:
+  - GradDiff
+
+handler: TCUSTrajectoryGradDiff
+args:
+  max_steps: 500
+  learning_rate: 1e-5
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4
+  optim: paged_adamw_32bit
+  warmup_steps: 0
+  lr_scheduler_type: constant
+  weight_decay: 0.0
+  remove_unused_columns: false
+  gradient_checkpointing: false
+  logging_steps: 1
+  seed: 3
+  data_seed: 3
+  do_eval: false
+  eval_on_start: false
+  eval_strategy: "no"
+  save_strategy: "no"
+method_args:
+  score_steps: 5
+  retain_penalty: 1.0
+  budget_frac: 0.10
+  param_filter: all
+  score_probe_size: 100000
+  provenance_path: null

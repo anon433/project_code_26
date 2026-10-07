@@ -1,0 +1,42 @@
+# @package _global_
+# Portable paired-stream recipes; command construction supplies paper settings.
+defaults:
+  - override /model: zephyr-7b-beta
+  - override /trainer: GradDiff
+  - override /data: unlearn
+  - override /eval: null
+  - override /data/datasets@data.forget: WMDP_forget
+  - override /data/datasets@data.retain: WMDP_retain
+
+data_split: cyber
+model_revision: null
+dataset_revision: null
+data:
+  anchor: forget
+  forget:
+    WMDP_forget:
+      args:
+        hf_args:
+          name: ${data_split}-forget-corpus
+          revision: ${dataset_revision}
+          data_files: null
+  retain:
+    WMDP_retain:
+      args:
+        hf_args:
+          name: ${data_split}-retain-corpus
+          revision: ${dataset_revision}
+          data_files: null
+model:
+  model_args:
+    attn_implementation: sdpa
+    device_map: balanced
+    revision: ${model_revision}
+  tokenizer_args:
+    revision: ${model_revision}
+  device_map_requirements:
+    required_cuda_devices: [0, 1]
+    forbid_cpu_disk_offload: true
+    model_layer_prefix: model.layers.
+mode: unlearn
+task_name: ???

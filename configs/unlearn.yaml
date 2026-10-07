@@ -1,0 +1,26 @@
+defaults:
+  - model: Llama-2-7b-hf
+  - trainer: GradDiff
+  - data: unlearn
+  - collator: DataCollatorForSupervisedDataset
+  - eval: null
+  - hydra: default
+  - paths: default
+  - experiment: null
+  - _self_
+
+trainer:
+  args:
+    remove_unused_columns: False
+    # Official benchmark metrics are final-test signals. Never expose them to
+    # an unlearning run before or between optimization epochs; use src/eval.py
+    # once the checkpoint and hyperparameters have been fixed.
+    do_eval: False
+    eval_on_start: False
+    eval_strategy: 'no'
+    load_best_model_at_end: False
+
+mode: unlearn
+active_mask_path: null
+active_mask_expected_version: null
+task_name: ???

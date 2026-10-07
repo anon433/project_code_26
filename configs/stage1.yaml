@@ -1,0 +1,33 @@
+stage: 1
+stage2_config: stage2.yaml
+budgets: all
+seeds:
+- 3
+datasets:
+- wmdpall
+- muse-news
+- muse-books
+selectors:
+- gec
+- wagle
+- tcus-gd
+- tcus-npo
+tcus:
+  score_steps: 5
+  retain_penalty: 1.0
+gec:
+  ema_alpha: 0.1
+  eps: 1.0e-08
+wagle:
+  wmdpall:
+    p: 0.01
+    q: 0.01
+    mu: 1.0e-06
+  muse-news:
+    p: 0.01
+    q: 0.01
+    mu: 0.001
+  muse-books:
+    p: 0.01
+    q: 0.01
+    mu: 0.001

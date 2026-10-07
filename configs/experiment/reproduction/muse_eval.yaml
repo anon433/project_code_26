@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - override /model: Llama-2-7b-hf
+  - override /eval: muse
+
+data_split: News
+retain_logs_path: null
+model_revision: null
+tokenizer_revision: null
+dataset_revision: null
+model:
+  model_args:
+    attn_implementation: sdpa
+    torch_dtype: bfloat16
+    device_map: auto
+    revision: ${model_revision}
+  tokenizer_args:
+    revision: ${tokenizer_revision}
+eval:
+  muse:
+    data_split: ${data_split}
+    retain_logs_path: ${retain_logs_path}
+    overwrite: true
+task_name: ???

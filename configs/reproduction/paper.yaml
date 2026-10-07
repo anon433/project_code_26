@@ -1,0 +1,211 @@
+schema_version: 1
+seeds:
+- 3
+- 7
+- 11
+support_fracs:
+- 0.01
+- 0.05
+- 0.1
+- 0.2
+- 0.4
+updaters:
+- gd
+- npo
+original_model_row:
+  label: Original
+  source: target_checkpoint
+  unlearning_applied: false
+  seed: null
+  n: 1
+  standard_deviation: null
+headline_supports:
+  wmdpall: 0.1
+  muse-news: 0.1
+  muse-books: 0.01
+selectors:
+  gec:
+    paper_label: GEC
+    implementation: normdiff
+    artifact_selector: normdiff
+    ema_alpha: 0.1
+    eps: 1.0e-08
+  tcus:
+    score_steps: 5
+    retain_penalty: 1.0
+stage1_resources:
+  processes: 1
+  cuda_visible_devices: 0,1
+  device_map: balanced
+  model_dtype: bfloat16
+  model_mode: eval
+  per_device_batch_size: 1
+  gradient_accumulation_steps: 1
+  parameter_scope: all
+datasets:
+  wmdpall:
+    display_name: WMDPALL
+    model:
+      repo: HuggingFaceH4/zephyr-7b-beta
+      revision: 892b3d7a7b1cf10c7a701c60881cd93df615734c
+    datasets:
+      wmdp_corpora:
+        repo: cais/wmdp-corpora
+        revision: daf89fa9b618b63a624228061a9cebacca88009c
+      wmdp_bio_forget:
+        repo: cais/wmdp-bio-forget-corpus
+        revision: 5a786ed1041e56fef2d4ed26c1239f12b73a68eb
+    traces:
+      trace_seed: 0
+      stage1_sha256: 33399d765456ccf869fd61b99f677f9aa9c0b9bda18aa66088f6f04aac7e432b
+      stage2_sha256: 33399d765456ccf869fd61b99f677f9aa9c0b9bda18aa66088f6f04aac7e432b
+    evaluation:
+      datasets:
+        eval_wmdp:
+          repo: cais/wmdp
+          revision: 7125571f22f032c56415e7980f48d877dd830ff8
+        eval_mmlu:
+          repo: hails/mmlu_no_train
+          revision: b2e1ec9aa795adafe68e8e983248dbd4b52a1c60
+      metric_keys:
+        bio: wmdp_bio/acc
+        cyber: wmdp_cyber/acc
+        mmlu: mmlu/acc
+    wagle:
+      p: 0.01
+      q: 0.01
+      mu: 1.0e-06
+      source: WAGLE_paper_WMDP_and_bundled_WMDP_configs
+    stage2:
+      max_steps: 500
+      per_device_train_batch_size: 1
+      gradient_accumulation_steps: 4
+      microbatches: 2000
+      warmup_steps: 50
+      lr_scheduler_type: linear
+      optim: adamw_torch
+      weight_decay: 0.0
+      recipes:
+        gd:
+          learning_rate: 1.0e-05
+          alpha: 1.0
+          gamma: 1.0
+        npo:
+          learning_rate: 2.0e-05
+          alpha: 1.0
+          gamma: 1.0
+          beta: 0.1
+      adam_beta1: 0.9
+      adam_beta2: 0.999
+      adam_epsilon: 1.0e-08
+      max_grad_norm: 1.0
+  muse-news:
+    display_name: MUSE News
+    model:
+      repo: muse-bench/MUSE-News_target
+      revision: a2f39769e9a0b98ec1cdd12f65e9962502208935
+    tokenizer:
+      repo: meta-llama/Llama-2-7b-hf
+      revision: 01c7f73d771dfac7d292323805ebc428287df4f9
+    dataset:
+      repo: muse-bench/MUSE-News
+      revision: 506bd5b150b92814d45e4404a82f120ab2d748bf
+    traces:
+      stage1_sha256: 7d2b269e6d050dd792f30e886ee56613d807df8c224a4cf72fda8f3ff6367ced
+      stage2_sha256: 2421d91b42537cdc317ad04ebe4a19e9d74d413236d9136fd58b42ab2740c51a
+      stage2_effective_consumption_sha256: 36f58fb6d46b833d31975b318fa546be68985e1994079764afbe535429e479f2
+    evaluation:
+      retain_logs_sha256: 11f8c9338f955a9fc1ce4148daa0fbd2867807c648a43f99dc240442d2135ec2
+      retain_logs:
+        repo: open-unlearning/eval
+        repo_type: dataset
+        revision: f31717fe522c2a6725ca0024980f51169a084ca1
+        path: muse_Llama-2-7b-hf_News_retrain/MUSE_EVAL.json
+      metric_keys:
+        verbmem: forget_verbmem_ROUGE
+        knowmem: forget_knowmem_ROUGE
+        retain: retain_knowmem_ROUGE
+        signed_privleak: privleak
+    wagle:
+      p: 0.01
+      q: 0.01
+      mu: 0.001
+      source: WAGLE_repository_generic_default
+    stage2:
+      max_steps: 500
+      per_device_train_batch_size: 1
+      gradient_accumulation_steps: 4
+      microbatches: 2000
+      warmup_steps: 0
+      lr_scheduler_type: constant
+      optim: paged_adamw_32bit
+      weight_decay: 0.0
+      recipes:
+        gd:
+          learning_rate: 1.0e-05
+          alpha: 1.0
+          gamma: 1.0
+        npo:
+          learning_rate: 6.0e-05
+          alpha: 1.0
+          gamma: 1.0
+          beta: 0.1
+      adam_beta1: 0.9
+      adam_beta2: 0.999
+      adam_epsilon: 1.0e-08
+      max_grad_norm: 1.0
+  muse-books:
+    display_name: MUSE Books
+    model:
+      repo: muse-bench/MUSE-Books_target
+      revision: c8dd3fb23a726762ec66d277933c7cff6767f3c2
+    tokenizer:
+      repo: meta-llama/Llama-2-7b-hf
+      revision: 01c7f73d771dfac7d292323805ebc428287df4f9
+    dataset:
+      repo: muse-bench/MUSE-Books
+      revision: 051ba90319e920d410d87cfdbd61f25843c1b892
+    traces:
+      stage1_sha256: 3f714430fdffe5830d0cb31ba228b7fe985fda0a6a5dc899a3c3b3806ac6e845
+      stage2_sha256: 171526aea2e2d783991c1f2734665bf5001ec20f2cba8020254bfc59c9e8d9f5
+      stage2_effective_consumption_sha256: 15bdcbc40646b017e88cac7fc78e2f1fcd4f55cafbdc96ef7f8680446a189975
+    evaluation:
+      retain_logs_sha256: 502d38cd7da4fda841e4ee411b488cce3be0d882a1e2c07a0117a83045be8b76
+      retain_logs:
+        repo: open-unlearning/eval
+        repo_type: dataset
+        revision: f31717fe522c2a6725ca0024980f51169a084ca1
+        path: muse_Llama-2-7b-hf_Books_retrain/MUSE_EVAL.json
+      metric_keys:
+        verbmem: forget_verbmem_ROUGE
+        knowmem: forget_knowmem_ROUGE
+        retain: retain_knowmem_ROUGE
+        signed_privleak: privleak
+    wagle:
+      p: 0.01
+      q: 0.01
+      mu: 0.001
+      source: WAGLE_repository_generic_default
+    stage2:
+      max_steps: 500
+      per_device_train_batch_size: 1
+      gradient_accumulation_steps: 4
+      microbatches: 2000
+      warmup_steps: 0
+      lr_scheduler_type: constant
+      optim: paged_adamw_32bit
+      weight_decay: 0.0
+      recipes:
+        gd:
+          learning_rate: 4.0e-06
+          alpha: 1.0
+          gamma: 1.0
+        npo:
+          learning_rate: 2.0e-05
+          alpha: 1.0
+          gamma: 1.0
+          beta: 0.1
+      adam_beta1: 0.9
+      adam_beta2: 0.999
+      adam_epsilon: 1.0e-08
+      max_grad_norm: 1.0

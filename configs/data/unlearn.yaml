@@ -1,0 +1,6 @@
+defaults:
+  - datasets@forget: WMDP_forget
+  - datasets@retain: WMDP_retain
+  - datasets@eval: null
+
+anchor: forget

@@ -1,0 +1,48 @@
+# @package _global_
+# Portable paired-stream recipes; command construction supplies paper settings.
+defaults:
+  - override /model: Llama-2-7b-hf
+  - override /trainer: GradDiff
+  - override /data: unlearn
+  - override /eval: null
+  - override /data/datasets@data.forget: MUSE_forget
+  - override /data/datasets@data.retain: MUSE_retain
+
+data_split: News
+forget_split: forget
+retain_split: retain1
+model_revision: null
+tokenizer_revision: null
+dataset_revision: null
+data:
+  anchor: forget
+  forget:
+    MUSE_forget:
+      args:
+        hf_args:
+          path: muse-bench/MUSE-${data_split}
+          split: ${forget_split}
+          revision: ${dataset_revision}
+  retain:
+    MUSE_retain:
+      args:
+        hf_args:
+          path: muse-bench/MUSE-${data_split}
+          split: ${retain_split}
+          revision: ${dataset_revision}
+model:
+  model_args:
+    attn_implementation: sdpa
+    device_map: balanced
+    revision: ${model_revision}
+  tokenizer_args:
+    revision: ${tokenizer_revision}
+  device_map_requirements:
+    required_cuda_devices: [0, 1]
+    forbid_cpu_disk_offload: true
+    model_layer_prefix: model.layers.
+trainer:
+  args:
+    num_train_epochs: 5
+mode: unlearn
+task_name: ???

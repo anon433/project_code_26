@@ -1,0 +1,6 @@
+defaults:
+  - TCUSTrajectoryGradDiff
+
+handler: TCUSTrajectoryNPO
+method_args:
+  beta: 0.1

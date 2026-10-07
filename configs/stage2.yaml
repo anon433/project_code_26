@@ -1,0 +1,86 @@
+stage: 2
+stage1_config: stage1.yaml
+budgets: headline
+seeds:
+- 3
+- 7
+- 11
+datasets:
+- wmdpall
+- muse-news
+- muse-books
+selectors:
+- gec
+- wagle
+- tcus
+updaters:
+- gd
+- npo
+mask_seed: 3
+training:
+  wmdpall:
+    max_steps: 500
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
+    warmup_steps: 50
+    lr_scheduler_type: linear
+    optim: adamw_torch
+    weight_decay: 0.0
+    recipes:
+      gd:
+        learning_rate: 1.0e-05
+        alpha: 1.0
+        gamma: 1.0
+      npo:
+        learning_rate: 2.0e-05
+        alpha: 1.0
+        gamma: 1.0
+        beta: 0.1
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    max_grad_norm: 1.0
+  muse-news:
+    max_steps: 500
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
+    warmup_steps: 0
+    lr_scheduler_type: constant
+    optim: paged_adamw_32bit
+    weight_decay: 0.0
+    recipes:
+      gd:
+        learning_rate: 1.0e-05
+        alpha: 1.0
+        gamma: 1.0
+      npo:
+        learning_rate: 6.0e-05
+        alpha: 1.0
+        gamma: 1.0
+        beta: 0.1
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    max_grad_norm: 1.0
+  muse-books:
+    max_steps: 500
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
+    warmup_steps: 0
+    lr_scheduler_type: constant
+    optim: paged_adamw_32bit
+    weight_decay: 0.0
+    recipes:
+      gd:
+        learning_rate: 4.0e-06
+        alpha: 1.0
+        gamma: 1.0
+      npo:
+        learning_rate: 2.0e-05
+        alpha: 1.0
+        gamma: 1.0
+        beta: 0.1
+    adam_beta1: 0.9
+    adam_beta2: 0.999
+    adam_epsilon: 1.0e-08
+    max_grad_norm: 1.0
