@@ -27,7 +27,7 @@ bash mask_search.sh
 bash stage2.sh
 ```
 
-Runs are serial and owned by verified GNU screen sessions. Generated files go to the sibling `<checkout-name>-work` directory, configurable with `SPARSE_UNLEARN_WORK_ROOT`. The supplied 7B setup requires two GPUs with at least 80,000 MiB each, a cgroup memory limit of at least 200 GiB, and sufficient disk space. Dry runs require no GPU or downloads.
+Runs are serial and owned by verified GNU screen sessions. Generated files go to the sibling `<checkout-name>-work` directory, configurable with `SPARSE_UNLEARN_WORK_ROOT`. The supplied 7B setup requires two GPUs with at least 80,000 MiB each, a memory limit of at least 200 GiB, and sufficient disk space. Dry runs require no GPU or downloads.
 
 See [reproduction instructions](docs/reproduction.md) for configuration, pinned inputs, output layout, resume behavior and verification.
 
