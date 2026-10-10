@@ -47,36 +47,3 @@ export SPARSE_UNLEARN_WORK_ROOT=/path/outside/checkout/work
 bash mask_search.sh --prepare
 bash mask_search.sh
 ```
-
-Use a new work root when changing numerical hyperparameters or source code. Changing only the budget/seed selection reuses compatible masks and completed cells; mask keys include the search seed. The effective numerical configuration, source hash, asset revisions and input hashes are recorded for every campaign.
-
-TCUS uses five actual updates by default, consuming the first 20 downstream forget/retain pairs in training mode. WMDP uses the prefix of its 500-step linear schedule, including its zero-learning-rate first step; MUSE uses a constant schedule. Search scores use the observed parameter displacement, with a per-update positive retain penalty. Stage 2 reloads the original checkpoint and creates a fresh optimizer before applying the fixed Boolean support.
-
-GEC and WAGLE score the original model in evaluation mode with complete independent forget and retain passes. The paired streams preserve each benchmark's published ordering and preprocessing. Official evaluation data is used only after optimization. WMDP evaluates bio, cyber and MMLU; MUSE evaluates knowledge, verbatim memorization and privacy leakage against pinned retain-model logs.
-
-## Outputs and recovery
-
-The work root contains `assets/`, `scores/`, `masks/`, `cells/`, `original/` and `jobs/`. Each job records its request, state and screen log. The shell reports a verified screen session and its log when submission succeeds. Inspect it with `screen -ls` and read the returned log path.
-
-States distinguish planned, queued, running, complete and failed. A queued job has a live runner waiting for masks or resources. Completion requires validated result receipts. Scores and dense checkpoints are deleted only after their corresponding masks or evaluations are sealed; packed masks, metrics and provenance remain available.
-
-Repeat a completed invocation to validate and reuse its receipts. A failed, interrupted or stale public job stops with its state path for inspection; it is not silently restarted. Train, evaluation and mask-materialization boundaries support validated recovery internally. Do not edit receipts or manufacture completion markers. Use a fresh work root to rerun a failed campaign when recovery has not been independently established.
-
-## Configuration checks and source distribution
-
-Validate both stages before submission:
-
-```bash
-bash mask_search.sh --dry-run
-bash stage2.sh --dry-run
-```
-
-These commands check the selected matrix and Hydra configurations without loading models or submitting jobs.
-
-Build an anonymous source ZIP outside the checkout with:
-
-```bash
-python -m src.reproduction.distribution --output /path/outside/checkout/reproduction.zip
-```
-
-The explicit allowlist excludes Git metadata, caches, runtime artifacts, paper files and local development records. ZIP timestamps and permissions are normalized and every member is checksum-verified. The builder scans machine paths, email addresses and common access-token forms. Optional `--private-terms /path/to/private.json` adds a local JSON list of identifying terms; keep that list outside the source tree. Inspect the final archive before submitting it. Required dependency license notices are retained.
