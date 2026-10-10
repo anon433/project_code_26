@@ -20,7 +20,7 @@ Both files support:
 
 Stage 1 selects `gec`, `wagle`, `tcus-gd`, and/or `tcus-npo`. Its `tcus`, `gec` and `wagle` sections control scoring hyperparameters. Stage 2 selects `gec`, `wagle`, and/or `tcus`, plus `gd` and/or `npo` updaters. Its `training` section controls each dataset's learning rates, loss coefficients, scheduler, optimizer, clipping and update count. Both stages resolve those same numerical settings so TCUS observes the downstream optimizer's actual trajectory.
 
-The supported pinned data protocol fixes batch size 1 and gradient accumulation 4. `max_steps` can be reduced but must cover the requested TCUS search and remain at most 500. Weight decay must stay zero to preserve unselected coordinates. Unknown settings, invalid ranges and incompatible settings fail before submission.
+The supported pinned data protocol fixes batch size 1 and gradient accumulation 4. `max_steps` can be reduced but must cover the requested TCUS search and remain at most 500. Weight decay must stay zero to preserve unselected coordinates. 
 
 Stage 2's `mask_seed: 3` reuses seed-3 masks for every downstream seed. Set `mask_seed: match` to use a separately searched mask for each seed, and run Stage 1 with the corresponding seeds first. A missing mask causes an error unless its selected Stage 1 campaign has a verified live predecessor session.
 
